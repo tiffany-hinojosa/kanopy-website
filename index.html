@@ -1323,7 +1323,7 @@ a, button { cursor: crosshair; }
             <div class="s4-body">Trusted by 2,400 teams. Join the waitlist and get early access.</div>
             <div style="display:flex;gap:4px;margin-bottom:6px;">
               <div style="flex:1;height:24px;background:rgba(246,241,232,0.06);border:1px solid rgba(246,241,232,0.1);border-radius:2px;display:flex;align-items:center;padding:0 5px;">
-                <span style="font-family:'DM Mono',monospace;font-size:7px;color:rgba(246,241,232,0.2)"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="7b02140e093b1e161a121755181416">[email&#160;protected]</a></span>
+                <span style="font-family:'DM Mono',monospace;font-size:7px;color:rgba(246,241,232,0.2)"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="3b42544e497b5e565a525715585456">[email&#160;protected]</a></span>
               </div>
             </div>
             <div class="s4-btn">Get early access →</div>
@@ -1988,12 +1988,14 @@ a, button { cursor: crosshair; }
 const track = document.getElementById('marquee');
 track.innerHTML += track.innerHTML;
 
-// Scroll reveal
+// Scroll reveal — robust version with fallback
 const reveals = document.querySelectorAll('.reveal');
 const obs = new IntersectionObserver(entries => {
   entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); } });
-}, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+}, { threshold: 0, rootMargin: '0px 0px 0px 0px' });
 reveals.forEach(el => obs.observe(el));
+// Fallback: if anything is still hidden after 1.5s, reveal it
+setTimeout(() => { reveals.forEach(el => el.classList.add('visible')); }, 1500);
 
 // Timeline rail animation when section comes into view
 const railFill = document.getElementById('rail-fill');
