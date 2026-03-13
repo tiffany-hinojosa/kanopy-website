@@ -1,0 +1,2013 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Canopy — See the system behind the ideas.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,300;0,400;0,700;0,900;1,400;1,700;1,900&family=Lora:ital,wght@0,400;0,500;1,400;1,500&family=DM+Mono:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+/* ── RESET & ROOT ─────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --ink:      #14120F;
+  --ink-2:    #1E1C18;
+  --paper:    #F6F1E8;
+  --paper-2:  #EDE8DC;
+  --paper-3:  #E4DDD0;
+  --violet:   #7B5CF0;
+  --violet-2: #9B82F4;
+  --violet-3: #C4B4F8;
+  --violet-dim:#2D2250;
+  --muted:    #6B6358;
+  --muted-2:  #8C8070;
+  --border:   #D8D0BC;
+  --border-dk:rgba(246,241,232,0.1);
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: 'Lora', Georgia, serif;
+  font-size: 17px;
+  line-height: 1.6;
+  overflow-x: hidden;
+  cursor: crosshair;
+}
+
+/* Grain */
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+  opacity: 0.04; pointer-events: none; z-index: 9999;
+}
+
+/* ── TYPE ──────────────────────────────────────────────────── */
+.display {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 900; letter-spacing: -0.02em;
+  line-height: 0.92; text-transform: uppercase;
+}
+.display-italic {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 900; font-style: italic;
+  letter-spacing: -0.01em; line-height: 0.92; text-transform: uppercase;
+}
+.label {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted);
+}
+.label-v {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--violet);
+}
+
+/* ── LAYOUT ────────────────────────────────────────────────── */
+.container { max-width: 1280px; margin: 0 auto; padding: 0 48px; }
+@media (max-width: 768px) { .container { padding: 0 24px; } }
+
+/* ── NAV ───────────────────────────────────────────────────── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  padding: 20px 48px;
+  display: flex; align-items: center; justify-content: space-between;
+  mix-blend-mode: multiply;
+}
+.nav-logo {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 900; font-size: 22px;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--ink); text-decoration: none;
+  display: flex; align-items: center; gap: 10px;
+}
+.nav-logo-leaf {
+  width: 20px; height: 20px;
+  background: var(--violet);
+  clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+  display: inline-block; flex-shrink: 0;
+}
+.nav-links { display: flex; gap: 32px; list-style: none; }
+.nav-links a {
+  font-family: 'DM Mono', monospace; font-size: 11px;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--ink); text-decoration: none;
+  opacity: 0.45; transition: opacity 0.2s;
+}
+.nav-links a:hover { opacity: 1; }
+.nav-cta {
+  font-family: 'DM Mono', monospace; font-size: 11px;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  background: var(--ink); color: var(--paper);
+  padding: 10px 22px; text-decoration: none;
+  transition: background 0.2s; cursor: crosshair;
+}
+.nav-cta:hover { background: var(--violet); }
+
+/* ── HERO ──────────────────────────────────────────────────── */
+#hero {
+  min-height: 100vh;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  padding-top: 80px; padding-bottom: 0;
+  overflow: hidden; position: relative;
+  border-bottom: 1px solid var(--border);
+  text-align: center;
+}
+
+.hero-text {
+  padding: 72px 24px 56px;
+  position: relative; z-index: 2;
+  max-width: 900px; width: 100%;
+}
+
+.hero-eyebrow {
+  display: flex; align-items: center; justify-content: center; gap: 12px;
+  margin-bottom: 28px;
+  animation: fadeUp 0.8s ease both;
+}
+.eyebrow-line { width: 40px; height: 1px; background: var(--violet); }
+
+.hero-h1 {
+  font-size: clamp(64px, 8vw, 124px);
+  color: var(--ink); margin-bottom: 8px;
+  animation: fadeUp 0.8s 0.1s ease both;
+}
+.hero-h1-italic {
+  font-size: clamp(64px, 8vw, 124px);
+  color: var(--violet);
+  animation: fadeUp 0.8s 0.2s ease both;
+  display: block; margin-bottom: 24px;
+}
+.hero-sub {
+  font-size: 17px; line-height: 1.65; color: var(--muted);
+  max-width: 580px; margin: 0 auto 48px;
+  animation: fadeUp 0.8s 0.3s ease both;
+  font-style: italic;
+}
+.hero-sub strong { color: var(--ink); font-style: normal; font-weight: 500; }
+
+.hero-actions {
+  display: flex; gap: 16px; align-items: center; justify-content: center;
+  animation: fadeUp 0.8s 0.4s ease both;
+}
+.btn-primary {
+  display: inline-block;
+  font-family: 'DM Mono', monospace; font-size: 12px;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  background: var(--violet); color: var(--paper);
+  padding: 16px 32px; text-decoration: none;
+  transition: all 0.2s; cursor: crosshair;
+  position: relative;
+}
+.btn-primary::after {
+  content: ''; position: absolute; bottom: -4px; right: -4px;
+  width: 100%; height: 100%;
+  border: 1px solid var(--violet); transition: all 0.2s;
+}
+.btn-primary:hover { background: var(--ink); }
+.btn-primary:hover::after { border-color: var(--ink); bottom: -6px; right: -6px; }
+
+.btn-ghost {
+  font-family: 'DM Mono', monospace; font-size: 11px;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--muted); text-decoration: none;
+  display: flex; align-items: center; gap: 8px;
+  transition: color 0.2s; cursor: crosshair;
+}
+.btn-ghost:hover { color: var(--ink); }
+.btn-ghost::after { content: '→'; transition: transform 0.2s; }
+.btn-ghost:hover::after { transform: translateX(4px); }
+
+/* ── WORKFLOW ANIMATION ───────────────────────────────────── */
+.hero-workflow {
+  width: 100%;
+  background: var(--ink);
+  border-top: 1px solid rgba(246,241,232,0.06);
+  position: relative; overflow: hidden;
+  height: 480px;
+  animation: fadeIn 1s 0.6s ease both;
+  flex-shrink: 0;
+}
+
+/* Stage progress bar */
+.wf-stages {
+  position: absolute; top: 0; left: 0; right: 0;
+  display: flex; z-index: 10;
+  border-bottom: 1px solid rgba(246,241,232,0.06);
+}
+.wf-stage-tab {
+  flex: 1; padding: 10px 0; text-align: center;
+  font-family: 'DM Mono', monospace; font-size: 9px;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  color: rgba(246,241,232,0.2);
+  border-right: 1px solid rgba(246,241,232,0.05);
+  transition: color 0.4s, background 0.4s;
+  position: relative; overflow: hidden;
+}
+.wf-stage-tab::after {
+  content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 2px;
+  background: var(--c, #7B5CF0); transform: scaleX(0); transform-origin: left;
+  transition: transform 0.4s ease;
+}
+.wf-stage-tab.active { color: rgba(246,241,232,0.85); }
+.wf-stage-tab.active::after { transform: scaleX(1); }
+.wf-stage-tab.done { color: rgba(246,241,232,0.35); }
+.wf-stage-tab.done::after { transform: scaleX(1); opacity: 0.3; }
+
+/* Scene container */
+.wf-scenes { position: absolute; inset: 36px 0 0; }
+.wf-scene {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.5s ease;
+  padding: 28px 48px;
+}
+.wf-scene.active { opacity: 1; pointer-events: auto; }
+
+/* Grid bg for all scenes */
+.wf-scene::before {
+  content: ''; position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(246,241,232,0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(246,241,232,0.025) 1px, transparent 1px);
+  background-size: 36px 36px;
+  pointer-events: none;
+}
+
+/* AI bar (shared) */
+.wf-ai-bar {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  background: rgba(14,12,10,0.95);
+  border-top: 1px solid rgba(123,92,240,0.3);
+  padding: 11px 20px; display: flex; align-items: center; gap: 10px;
+  font-family: 'DM Mono', monospace; font-size: 9.5px;
+  color: rgba(246,241,232,0.35); z-index: 5;
+}
+.wf-ai-dot {
+  width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0;
+  background: var(--violet); animation: pulse 2s ease-in-out infinite;
+}
+.wf-ai-label { color: rgba(123,92,240,0.9); margin-right: 2px; }
+
+/* ── SCENE 1: THINK ── */
+.s1-layout {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 24px; width: 100%; max-width: 860px;
+}
+.s1-chat {
+  background: rgba(246,241,232,0.04);
+  border: 1px solid rgba(246,241,232,0.09);
+  border-radius: 4px; padding: 18px;
+  display: flex; flex-direction: column; gap: 12px;
+}
+.s1-mode-pills {
+  display: flex; gap: 6px; margin-bottom: 4px;
+}
+.s1-pill {
+  font-family: 'DM Mono', monospace; font-size: 8px;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  padding: 4px 10px; border-radius: 100px;
+  border: 1px solid transparent;
+  color: rgba(246,241,232,0.25);
+}
+.s1-pill.active {
+  border-color: rgba(233,69,96,0.5);
+  color: rgba(233,69,96,0.9);
+  background: rgba(233,69,96,0.07);
+}
+.s1-msg {
+  border-radius: 3px; padding: 10px 12px;
+  font-family: 'Lora', serif; font-size: 11px;
+  line-height: 1.55; opacity: 0;
+}
+.s1-msg.user {
+  background: rgba(246,241,232,0.05);
+  border: 1px solid rgba(246,241,232,0.08);
+  color: rgba(246,241,232,0.45);
+  align-self: flex-end; max-width: 85%;
+  animation: msgIn 0.4s ease both;
+}
+.s1-msg.ai {
+  background: rgba(233,69,96,0.06);
+  border: 1px solid rgba(233,69,96,0.15);
+  color: rgba(246,241,232,0.65);
+  max-width: 90%;
+  animation: msgIn 0.4s ease both;
+}
+.s1-msg.ai .ai-label {
+  font-family: 'DM Mono', monospace; font-size: 8px;
+  color: rgba(233,69,96,0.7); letter-spacing: 0.08em;
+  text-transform: uppercase; margin-bottom: 5px;
+}
+.s1-data {
+  background: rgba(246,241,232,0.03);
+  border: 1px solid rgba(76,175,80,0.15);
+  border-radius: 4px; padding: 14px;
+}
+.s1-data-label {
+  font-family: 'DM Mono', monospace; font-size: 8px;
+  color: rgba(76,175,80,0.8); letter-spacing: 0.1em; text-transform: uppercase;
+  margin-bottom: 10px; display: flex; align-items: center; gap: 6px;
+}
+.s1-data-dot { width: 5px; height: 5px; border-radius: 50%; background: rgba(76,175,80,0.8); }
+.s1-stat {
+  padding: 6px 9px;
+  background: rgba(76,175,80,0.06);
+  border: 1px solid rgba(76,175,80,0.1);
+  border-radius: 2px; margin-bottom: 5px;
+  font-family: 'DM Mono', monospace; font-size: 9px;
+  color: rgba(246,241,232,0.3); line-height: 1.4;
+}
+.s1-stat .stat-hi { color: rgba(76,175,80,0.8); }
+
+/* ── SCENE 2: BOARD ── */
+.s2-layout { position: relative; width: 100%; height: 100%; }
+.s2-card {
+  position: absolute;
+  background: rgba(246,241,232,0.06);
+  border: 1.5px solid rgba(246,241,232,0.12);
+  border-radius: 3px; padding: 10px 12px;
+  font-family: 'Lora', serif; font-size: 10.5px;
+  color: rgba(246,241,232,0.65); line-height: 1.45;
+  max-width: 148px; opacity: 0;
+}
+.s2-card .c-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  margin-bottom: 7px; background: var(--cc);
+}
+.s2-card .c-vote {
+  font-family: 'DM Mono', monospace; font-size: 8px;
+  color: var(--cc); margin-top: 6px; opacity: 0.75;
+}
+.s2-cluster {
+  position: absolute; border-radius: 6px;
+  border: 1px dashed;
+  font-family: 'DM Mono', monospace; font-size: 8px;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  padding: 7px 11px;
+  opacity: 0; transition: opacity 0.6s ease;
+}
+
+/* ── SCENE 3: SCORE ── */
+.s3-layout {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 20px; width: 100%; max-width: 860px; align-items: start;
+}
+.s3-matrix {
+  position: relative;
+  background: rgba(246,241,232,0.03);
+  border: 1px solid rgba(246,241,232,0.07);
+  border-radius: 4px; padding: 18px;
+  aspect-ratio: 1;
+}
+.s3-axis-label {
+  position: absolute; font-family: 'DM Mono', monospace; font-size: 8px;
+  color: rgba(246,241,232,0.2); letter-spacing: 0.08em; text-transform: uppercase;
+}
+.s3-quadrant-label {
+  position: absolute; font-family: 'DM Mono', monospace; font-size: 7px;
+  letter-spacing: 0.06em; text-transform: uppercase; font-weight: 700;
+}
+.s3-crosshair-h, .s3-crosshair-v {
+  position: absolute; background: rgba(246,241,232,0.07);
+}
+.s3-crosshair-h { left: 8%; right: 8%; height: 1px; top: 50%; }
+.s3-crosshair-v { top: 8%; bottom: 8%; width: 1px; left: 50%; }
+.s3-dot {
+  position: absolute; border-radius: 50%;
+  border: 2px solid; transform: translate(-50%,-50%);
+  width: 18px; height: 18px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'DM Mono', monospace; font-size: 7px; font-weight: 700;
+  cursor: default; transition: transform 0.3s ease;
+  opacity: 0; animation: dotPop 0.4s ease both;
+}
+.s3-list { display: flex; flex-direction: column; gap: 7px; }
+.s3-row {
+  padding: 9px 12px;
+  background: rgba(246,241,232,0.04);
+  border: 1px solid rgba(246,241,232,0.07);
+  border-radius: 3px; opacity: 0;
+  animation: rowSlide 0.35s ease both;
+}
+.s3-row-title {
+  font-family: 'Lora', serif; font-size: 10px;
+  color: rgba(246,241,232,0.6); margin-bottom: 5px; line-height: 1.3;
+}
+.s3-bars { display: flex; gap: 6px; }
+.s3-bar-wrap { flex: 1; }
+.s3-bar-label {
+  font-family: 'DM Mono', monospace; font-size: 7px;
+  color: rgba(246,241,232,0.2); margin-bottom: 3px; text-transform: uppercase; letter-spacing: 0.07em;
+}
+.s3-bar-bg { height: 3px; background: rgba(246,241,232,0.06); border-radius: 2px; overflow: hidden; }
+.s3-bar-fill { height: 100%; border-radius: 2px; width: 0; transition: width 0.8s cubic-bezier(0.25,1,0.5,1); }
+
+/* ── SCENE 4: PROTOTYPE ── */
+.s4-layout {
+  display: grid; grid-template-columns: auto 1fr;
+  gap: 24px; width: 100%; max-width: 860px; align-items: start;
+}
+.s4-phone {
+  width: 140px; background: rgba(20,18,15,0.9);
+  border: 1px solid rgba(246,241,232,0.12); border-radius: 16px;
+  overflow: hidden; flex-shrink: 0; position: relative;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.4);
+}
+.s4-phone-notch {
+  width: 48px; height: 4px; background: rgba(246,241,232,0.08);
+  border-radius: 2px; margin: 10px auto 0;
+}
+.s4-screen { padding: 10px 8px 10px; }
+.s4-nav {
+  background: rgba(123,92,240,0.15);
+  border-bottom: 1px solid rgba(123,92,240,0.2);
+  padding: 7px 8px; display: flex; align-items: center;
+  justify-content: space-between; margin: -10px -8px 8px;
+}
+.s4-nav-brand {
+  font-family: 'DM Mono', monospace; font-size: 8px;
+  color: rgba(123,92,240,0.9); letter-spacing: 0.1em;
+}
+.s4-nav-btn {
+  background: rgba(123,92,240,0.8); border-radius: 2px;
+  padding: 3px 6px; font-family: 'DM Mono', monospace; font-size: 7px;
+  color: white;
+}
+.s4-hero-img {
+  height: 52px; background: rgba(123,92,240,0.1);
+  border: 1px solid rgba(123,92,240,0.15); border-radius: 3px;
+  margin-bottom: 7px; display: flex; align-items: center; justify-content: center;
+  font-size: 16px;
+}
+.s4-heading {
+  font-family: 'DM Mono', monospace; font-size: 8px; font-weight: 700;
+  color: rgba(246,241,232,0.8); margin-bottom: 4px; line-height: 1.3;
+}
+.s4-body {
+  font-family: 'Lora', serif; font-size: 7.5px;
+  color: rgba(246,241,232,0.35); line-height: 1.45; margin-bottom: 8px;
+}
+.s4-btn {
+  width: 100%; padding: 6px; background: rgba(123,92,240,0.8);
+  border-radius: 3px; text-align: center;
+  font-family: 'DM Mono', monospace; font-size: 7px;
+  color: white; letter-spacing: 0.08em;
+}
+.s4-card-row {
+  display: flex; gap: 5px; margin-top: 6px;
+}
+.s4-mini-card {
+  flex: 1; background: rgba(246,241,232,0.04);
+  border: 1px solid rgba(246,241,232,0.08); border-radius: 3px;
+  padding: 5px; font-family: 'Lora', serif; font-size: 7px;
+  color: rgba(246,241,232,0.3); line-height: 1.3;
+}
+.s4-info { display: flex; flex-direction: column; gap: 10px; padding-top: 8px; }
+.s4-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-family: 'DM Mono', monospace; font-size: 8px;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  padding: 5px 10px; border-radius: 100px;
+  border: 1px solid rgba(123,92,240,0.3);
+  color: rgba(123,92,240,0.8); background: rgba(123,92,240,0.08);
+  margin-bottom: 10px;
+}
+.s4-ds-row {
+  padding: 9px 12px;
+  background: rgba(246,241,232,0.03);
+  border: 1px solid rgba(246,241,232,0.07);
+  border-radius: 3px; margin-bottom: 6px;
+}
+.s4-ds-label {
+  font-family: 'DM Mono', monospace; font-size: 8px;
+  color: rgba(246,241,232,0.2); letter-spacing: 0.08em;
+  text-transform: uppercase; margin-bottom: 6px;
+}
+.s4-token-row { display: flex; gap: 4px; }
+.s4-token {
+  width: 16px; height: 16px; border-radius: 3px;
+  border: 1px solid rgba(246,241,232,0.08);
+}
+
+/* ── SCENE 5: ROADMAP ── */
+.s5-layout {
+  display: flex; flex-direction: column; gap: 14px;
+  width: 100%; max-width: 820px;
+}
+.s5-progress { display: flex; gap: 3px; height: 3px; margin-bottom: 4px; }
+.s5-progress-seg { flex: 1; border-radius: 2px; opacity: 0.7; }
+.s5-phases { display: flex; gap: 12px; }
+.s5-phase {
+  flex: 1; background: rgba(246,241,232,0.04);
+  border-radius: 4px; padding: 14px 14px 12px;
+  opacity: 0;
+}
+.s5-phase-label {
+  font-family: 'DM Mono', monospace; font-size: 8px; font-weight: 700;
+  letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 3px;
+}
+.s5-phase-time {
+  font-family: 'DM Mono', monospace; font-size: 7px;
+  color: rgba(246,241,232,0.2); margin-bottom: 9px;
+}
+.s5-milestone {
+  font-family: 'Lora', serif; font-size: 11px; font-weight: 500;
+  line-height: 1.3; margin-bottom: 8px; color: rgba(246,241,232,0.85);
+}
+.s5-metric {
+  font-family: 'DM Mono', monospace; font-size: 7.5px;
+  letter-spacing: 0.05em; padding: 3px 7px; border-radius: 2px;
+  display: inline-block; margin-bottom: 8px;
+}
+.s5-task {
+  display: flex; gap: 5px; align-items: flex-start;
+  padding: 3px 5px; border-radius: 2px; margin-bottom: 3px;
+}
+.s5-task-dot { width: 3px; height: 3px; border-radius: 50%; margin-top: 5px; flex-shrink: 0; }
+.s5-task-text {
+  font-family: 'DM Mono', monospace; font-size: 8.5px;
+  color: rgba(123,92,240,0.55); line-height: 1.45;
+}
+.s5-export-bar {
+  background: rgba(246,241,232,0.03);
+  border: 1px solid rgba(246,241,232,0.07);
+  border-radius: 4px; padding: 11px 14px;
+  display: flex; align-items: center; gap: 10px; opacity: 0;
+  animation: fadeIn 0.5s ease both;
+}
+.s5-export-btn {
+  font-family: 'DM Mono', monospace; font-size: 8px;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  padding: 5px 12px; border-radius: 2px; cursor: default;
+}
+
+@keyframes msgIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+@keyframes dotPop { from { opacity:0; transform:translate(-50%,-50%) scale(0); } to { opacity:1; transform:translate(-50%,-50%) scale(1); } }
+@keyframes rowSlide { from { opacity:0; transform:translateX(-8px); } to { opacity:1; transform:translateX(0); } }
+@keyframes phaseRise { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
+@keyframes typewriter { from { width:0; } to { width:100%; } }
+
+@media (max-width: 900px) {
+  .hero-workflow { height: 420px; }
+  .s1-layout, .s3-layout, .s4-layout { grid-template-columns: 1fr; }
+  .s3-matrix { aspect-ratio: unset; height: 180px; }
+  .s4-phone { display: none; }
+}
+@media (max-width: 688px) {
+  #hero { padding-bottom: 0; }
+  .hero-workflow { height: 360px; }
+  .s5-phases { flex-direction: column; }
+}
+
+/* ── MARQUEE ───────────────────────────────────────────────── */
+.marquee-strip {
+  background: var(--ink); color: var(--paper);
+  padding: 14px 0; overflow: hidden;
+  border-bottom: 1px solid var(--border);
+}
+.marquee-track {
+  display: flex; gap: 0; white-space: nowrap;
+  animation: marquee 30s linear infinite;
+}
+.marquee-item {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700; font-size: 14px;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  padding: 0 40px; display: flex; align-items: center; gap: 24px; flex-shrink: 0;
+}
+.marquee-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--violet); flex-shrink: 0; }
+
+/* ── MANIFESTO ─────────────────────────────────────────────── */
+#manifesto {
+  padding: 140px 0; border-bottom: 1px solid var(--border);
+  position: relative; overflow: hidden;
+}
+.manifesto-grid {
+  display: grid; grid-template-columns: 1fr 2fr; gap: 80px; align-items: start;
+}
+.manifesto-left { position: sticky; top: 120px; }
+.manifesto-number {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 900; font-size: 180px; line-height: 1;
+  color: var(--paper-2); margin-bottom: -20px; margin-left: -8px; user-select: none;
+}
+.manifesto-statement {
+  font-size: clamp(28px, 4vw, 46px); line-height: 1.15; margin-bottom: 32px; font-weight: 400;
+}
+.manifesto-statement em { font-style: italic; color: var(--violet); }
+.manifesto-body {
+  font-size: 16px; line-height: 1.75; color: var(--muted); max-width: 520px; margin-bottom: 24px;
+}
+.manifesto-body strong { color: var(--ink); font-weight: 500; }
+.pull-quote {
+  border-left: 3px solid var(--violet); padding-left: 24px;
+  margin: 40px 0; font-size: 20px; font-style: italic;
+  line-height: 1.5; color: var(--ink);
+}
+
+/* ── ENGINE SECTION ─────────────────────────────────────────── */
+#engine { padding: 120px 0; background: var(--paper); }
+.engine-header { max-width: 640px; margin-bottom: 72px; }
+.engine-h2 { font-size: clamp(36px, 5vw, 56px); line-height: 1.05; color: var(--ink); margin-bottom: 20px; }
+.engine-intro { font-size: 16px; color: var(--muted); line-height: 1.7; max-width: 520px; }
+.engine-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2px;
+  background: var(--ink);
+}
+.engine-step {
+  background: var(--paper);
+  padding: 36px 32px 32px;
+  position: relative;
+  transition: background 0.2s;
+}
+.engine-step:hover { background: #EDE8FF; }
+.engine-step--accent { background: var(--violet); }
+.engine-step--accent:hover { background: #6A4BE0; }
+.engine-step--accent .engine-num,
+.engine-step--accent .engine-title,
+.engine-step--accent .engine-body { color: #fff; }
+.engine-step--accent .engine-icon { opacity: 0.9; }
+.engine-step--full {
+  grid-column: span 3;
+  display: grid;
+  grid-template-columns: 60px auto 1fr;
+  align-items: start;
+  gap: 0 24px;
+  padding: 32px;
+}
+.engine-step--full .engine-icon { grid-row: span 2; align-self: center; font-size: 28px; }
+.engine-step--full .engine-title { font-size: 18px; }
+.engine-num {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: 0.1em;
+  margin-bottom: 20px;
+  opacity: 0.5;
+}
+.engine-icon {
+  font-size: 24px;
+  margin-bottom: 14px;
+  display: block;
+}
+.engine-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 10px;
+  line-height: 1.3;
+}
+.engine-body {
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.65;
+}
+.engine-new {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: #fff;
+  color: var(--violet);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border-radius: 100px;
+}
+@media (max-width: 900px) {
+  .engine-grid { grid-template-columns: 1fr 1fr; }
+  .engine-step--full { grid-column: span 2; grid-template-columns: 1fr; }
+  .engine-step--full .engine-icon { margin-bottom: 12px; }
+}
+@media (max-width: 600px) {
+  .engine-grid { grid-template-columns: 1fr; }
+  .engine-step--full { grid-column: span 1; }
+}
+
+/* ── HOW IT WORKS / TIMELINE ───────────────────────────────── */
+#how {
+  padding: 140px 0; border-bottom: 1px solid var(--border);
+  background: var(--ink); color: var(--paper);
+}
+.how-header {
+  display: flex; justify-content: space-between; align-items: flex-end;
+  margin-bottom: 80px; padding-bottom: 40px;
+  border-bottom: 1px solid var(--border-dk);
+}
+.how-h2 {
+  font-size: clamp(56px, 7vw, 94px);
+  color: var(--paper); max-width: 700px; line-height: 0.92;
+}
+.how-h2 .accent { color: var(--violet-2); }
+.how-intro {
+  max-width: 300px; font-size: 15px;
+  color: rgba(246,241,232,0.45); font-style: italic; line-height: 1.7; padding-bottom: 8px;
+}
+
+/* ── HORIZONTAL TIMELINE ────────────────────────────────────── */
+.timeline-wrap {
+  position: relative;
+  padding-bottom: 20px;
+}
+
+/* Horizontal connector line */
+.timeline-rail {
+  position: absolute;
+  top: 42px; left: 0; right: 0; height: 1px;
+  background: rgba(246,241,232,0.08);
+  z-index: 0;
+}
+.timeline-rail-fill {
+  position: absolute;
+  top: 42px; left: 0; height: 1px;
+  background: linear-gradient(to right, var(--violet), var(--violet-3));
+  width: 0%; transition: width 1.4s cubic-bezier(0.16,1,0.3,1);
+  z-index: 1;
+}
+.timeline-rail-fill.animate { width: 100%; }
+
+.timeline-steps {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 0;
+  position: relative; z-index: 2;
+}
+
+.t-step {
+  padding: 0 20px 0 0;
+  position: relative;
+  cursor: default;
+}
+.t-step:last-child { padding-right: 0; }
+
+/* Node dot on the rail */
+.t-node {
+  width: 16px; height: 16px; border-radius: 50%;
+  background: var(--ink-2);
+  border: 1.5px solid rgba(246,241,232,0.2);
+  margin-bottom: 28px;
+  position: relative; z-index: 3;
+  transition: all 0.3s;
+  flex-shrink: 0;
+}
+.t-step:hover .t-node,
+.t-step.active .t-node {
+  background: var(--violet);
+  border-color: var(--violet-2);
+  box-shadow: 0 0 0 4px rgba(123,92,240,0.18), 0 0 16px rgba(123,92,240,0.3);
+  transform: scale(1.2);
+}
+
+/* Step number */
+.t-num {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 900; font-size: 72px; line-height: 1;
+  color: rgba(246,241,232,0.04); letter-spacing: -0.02em;
+  position: absolute; top: -8px; left: 18px;
+  pointer-events: none; user-select: none;
+  transition: color 0.3s;
+}
+.t-step:hover .t-num { color: rgba(123,92,240,0.12); }
+
+/* Color bar at top (appears on hover) */
+.t-bar {
+  position: absolute; top: -1px; left: 0;
+  height: 3px; width: 100%;
+  background: var(--c, var(--violet));
+  transform: scaleX(0); transform-origin: left;
+  transition: transform 0.4s ease;
+}
+.t-step:hover .t-bar,
+.t-step.active .t-bar { transform: scaleX(1); }
+
+.t-step-inner {
+  padding: 28px 24px 32px 0;
+  border-top: 1px solid rgba(246,241,232,0.06);
+  transition: border-color 0.3s;
+}
+.t-step:hover .t-step-inner,
+.t-step.active .t-step-inner { border-color: rgba(123,92,240,0.3); }
+
+.t-label {
+  font-family: 'DM Mono', monospace; font-size: 9px;
+  letter-spacing: 0.15em; text-transform: uppercase;
+  color: rgba(246,241,232,0.3); margin-bottom: 8px;
+  transition: color 0.3s;
+}
+.t-step:hover .t-label { color: var(--violet-3); }
+
+.t-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700; font-size: 22px;
+  letter-spacing: 0.03em; text-transform: uppercase;
+  color: var(--paper); margin-bottom: 10px;
+  transition: color 0.3s;
+}
+.t-step:hover .t-title,
+.t-step.active .t-title { color: var(--violet-3); }
+
+.t-icon { font-size: 18px; margin-bottom: 10px; display: block; }
+
+.t-desc {
+  font-size: 13px; line-height: 1.6;
+  color: rgba(246,241,232,0.38);
+  transition: color 0.3s;
+  max-height: 0; overflow: hidden;
+  transition: max-height 0.5s cubic-bezier(0.16,1,0.3,1), color 0.3s, opacity 0.3s;
+  opacity: 0;
+}
+.t-step:hover .t-desc,
+.t-step.active .t-desc {
+  max-height: 200px; opacity: 1;
+  color: rgba(246,241,232,0.55);
+}
+
+/* NEW badge */
+.t-new {
+  display: inline-block;
+  font-family: 'DM Mono', monospace; font-size: 8px;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  background: var(--violet); color: var(--paper);
+  padding: 2px 7px; margin-left: 8px; vertical-align: middle;
+}
+
+/* Funnel visualization that pops up below the active step */
+.t-funnel-pop {
+  position: absolute; top: calc(100% + 16px); left: 0;
+  width: 200px; z-index: 50;
+  background: rgba(20,18,15,0.96);
+  border: 1px solid rgba(123,92,240,0.3);
+  padding: 16px;
+  opacity: 0; pointer-events: none;
+  transform: translateY(-6px);
+  transition: opacity 0.3s, transform 0.3s;
+}
+.t-step:hover .t-funnel-pop {
+  opacity: 1; pointer-events: auto; transform: translateY(0);
+}
+.funnel-pop-label {
+  font-family: 'DM Mono', monospace; font-size: 8px;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--violet); margin-bottom: 12px;
+}
+.fp-row { margin-bottom: 8px; }
+.fp-row-labels { display: flex; justify-content: space-between; margin-bottom: 3px; }
+.fp-row-labels span { font-family: 'DM Mono', monospace; font-size: 8px; color: rgba(246,241,232,0.3); }
+.fp-row-labels span:last-child { color: var(--violet-3); }
+.fp-bar-bg { height: 4px; background: rgba(246,241,232,0.06); border-radius: 2px; }
+.fp-bar-fill { height: 100%; border-radius: 2px; background: linear-gradient(to right, var(--violet), var(--violet-3)); }
+
+/* ── BENTO FEATURES ─────────────────────────────────────────── */
+#features {
+  padding: 140px 0; border-bottom: 1px solid var(--border);
+}
+.features-heading { margin-bottom: 64px; }
+.features-h2 {
+  font-size: clamp(48px, 6vw, 80px);
+  max-width: 700px; margin-top: 16px; line-height: 0.95;
+}
+.bento {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 2px; background: var(--border);
+}
+.bento-card {
+  background: var(--paper); padding: 40px;
+  position: relative; overflow: hidden; transition: background 0.2s;
+}
+.bento-card:hover { background: var(--paper-2); }
+.bento-card.wide { grid-column: span 2; }
+.bento-card.tall { grid-row: span 2; }
+.bento-card.dark { background: var(--ink); color: var(--paper); }
+.bento-card.dark:hover { background: var(--ink-2); }
+.bento-card.violet-card { background: var(--violet); color: var(--paper); }
+.bento-card.violet-card:hover { background: #6A4EDD; }
+
+.bento-icon {
+  width: 40px; height: 40px; border-radius: 50%;
+  background: var(--paper-2);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; margin-bottom: 20px;
+}
+.bento-card.dark .bento-icon { background: rgba(246,241,232,0.08); }
+.bento-card.violet-card .bento-icon { background: rgba(255,255,255,0.18); }
+
+.bento-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700; font-size: 22px;
+  letter-spacing: 0.02em; text-transform: uppercase; margin-bottom: 10px;
+}
+.bento-desc {
+  font-size: 14px; line-height: 1.65;
+  color: var(--muted); max-width: 360px;
+}
+.bento-card.dark .bento-desc { color: rgba(246,241,232,0.45); }
+.bento-card.violet-card .bento-desc { color: rgba(255,255,255,0.72); }
+.bento-card.violet-card .bento-title { color: #fff; }
+
+.bento-number {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 900; font-size: 96px; line-height: 1;
+  letter-spacing: -0.04em; opacity: 0.12;
+  position: absolute; bottom: 20px; right: 24px;
+  pointer-events: none; user-select: none;
+}
+
+/* Chip badges */
+.chip-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 20px; }
+.chip {
+  font-family: 'DM Mono', monospace; font-size: 10px;
+  letter-spacing: 0.06em; text-transform: uppercase;
+  padding: 5px 12px;
+  border: 1px solid var(--border);
+  color: var(--muted);
+}
+.chip.v { background: rgba(123,92,240,0.1); border-color: rgba(123,92,240,0.3); color: var(--violet); }
+
+/* ── INTEGRATIONS ───────────────────────────────────────────── */
+#integrations {
+  padding: 140px 0; border-bottom: 1px solid var(--border);
+  background: var(--paper-2);
+}
+.int-grid {
+  display: grid; grid-template-columns: repeat(4,1fr);
+  gap: 2px; background: var(--border); margin-top: 64px;
+}
+.int-card {
+  background: var(--paper-2); padding: 32px 28px;
+  transition: background 0.2s; position: relative;
+}
+.int-card:hover { background: var(--paper); }
+.int-logo {
+  font-size: 22px; margin-bottom: 14px; display: block;
+}
+.int-name {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700; font-size: 16px; letter-spacing: 0.04em;
+  text-transform: uppercase; color: var(--ink); margin-bottom: 6px;
+}
+.int-desc { font-size: 12px; color: var(--muted); line-height: 1.5; font-style: italic; }
+.int-badge {
+  display: inline-block; margin-top: 12px;
+  font-family: 'DM Mono', monospace; font-size: 8px;
+  letter-spacing: 0.1em; text-transform: uppercase; padding: 3px 8px;
+}
+.badge-live { background: var(--violet); color: var(--paper); }
+.badge-soon { background: var(--paper-3); color: var(--muted); }
+.int-card.add-card { background: transparent; border: 1px dashed var(--border); margin: 2px; display: flex; align-items: center; justify-content: center; padding: 0; }
+.int-card.add-card span { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted-2); }
+
+/* ── VS SECTION ─────────────────────────────────────────────── */
+#vs {
+  padding: 140px 0; border-bottom: 1px solid var(--border);
+}
+.vs-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 2px; background: var(--border); margin-top: 64px;
+}
+.vs-col { padding: 48px; }
+.vs-col.theirs { background: var(--paper-2); }
+.vs-col.ours { background: var(--ink); color: var(--paper); }
+.vs-label {
+  font-family: 'DM Mono', monospace; font-size: 10px;
+  letter-spacing: 0.16em; text-transform: uppercase;
+  margin-bottom: 32px; padding-bottom: 16px; border-bottom: 1px solid;
+}
+.vs-col.theirs .vs-label { color: var(--muted); border-color: var(--border); }
+.vs-col.ours .vs-label { color: var(--violet-2); border-color: rgba(123,92,240,0.3); }
+.vs-item {
+  display: flex; gap: 12px; padding: 12px 0;
+  border-bottom: 1px solid; font-size: 15px; line-height: 1.5;
+}
+.vs-col.theirs .vs-item { border-color: var(--border); color: var(--muted); }
+.vs-col.ours .vs-item { border-color: var(--border-dk); color: rgba(246,241,232,0.8); }
+.vs-x { color: #9B6B5A; flex-shrink: 0; }
+.vs-check { color: var(--violet-2); flex-shrink: 0; }
+
+/* ── PRICING ─────────────────────────────────────────────────── */
+#pricing {
+  padding: 140px 0; border-bottom: 1px solid var(--border);
+}
+.pricing-grid {
+  display: grid; grid-template-columns: repeat(3,1fr);
+  gap: 2px; background: var(--border); margin-top: 64px;
+}
+.pricing-card { background: var(--paper); padding: 48px 40px; }
+.pricing-card.featured { background: var(--ink); color: var(--paper); position: relative; }
+.featured-badge {
+  position: absolute; top: -1px; right: 40px;
+  font-family: 'DM Mono', monospace; font-size: 9px;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  background: var(--violet); color: var(--paper); padding: 4px 10px;
+}
+.price-tier {
+  font-family: 'DM Mono', monospace; font-size: 10px;
+  letter-spacing: 0.16em; text-transform: uppercase;
+  color: var(--muted); margin-bottom: 20px;
+}
+.pricing-card.featured .price-tier { color: rgba(246,241,232,0.4); }
+.price-amount {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 900; font-size: 72px; line-height: 1; margin-bottom: 4px; letter-spacing: -0.02em;
+}
+.price-period { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--muted); margin-bottom: 32px; }
+.pricing-card.featured .price-period { color: rgba(246,241,232,0.4); }
+.price-divider { height: 1px; background: var(--border); margin: 24px 0; }
+.pricing-card.featured .price-divider { background: rgba(246,241,232,0.1); }
+.price-feature { display: flex; gap: 10px; font-size: 14px; line-height: 1.5; padding: 6px 0; color: var(--muted); }
+.pricing-card.featured .price-feature { color: rgba(246,241,232,0.6); }
+.price-feature .check { color: var(--violet-2); flex-shrink: 0; }
+.btn-price {
+  display: block; text-align: center;
+  font-family: 'DM Mono', monospace; font-size: 11px;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  padding: 14px; text-decoration: none; margin-top: 32px; transition: all 0.2s; cursor: crosshair;
+}
+.btn-price.outline { border: 1px solid var(--border); color: var(--ink); }
+.btn-price.outline:hover { border-color: var(--violet); color: var(--violet); }
+.btn-price.solid { background: var(--violet); color: var(--paper); }
+.btn-price.solid:hover { background: var(--paper); color: var(--ink); }
+
+/* ── CTA ─────────────────────────────────────────────────────── */
+#cta {
+  padding: 160px 0; background: var(--violet);
+  position: relative; overflow: hidden;
+}
+#cta::before {
+  content: 'CANOPY';
+  position: absolute;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 900; font-size: 300px; line-height: 1;
+  color: rgba(20,18,15,0.07); right: -40px; top: 50%;
+  transform: translateY(-50%); pointer-events: none;
+  letter-spacing: -0.02em; text-transform: uppercase;
+}
+.cta-inner { position: relative; z-index: 2; }
+.cta-h2 {
+  font-size: clamp(60px, 8vw, 120px); color: var(--ink);
+  margin-bottom: 24px; max-width: 900px;
+}
+.cta-sub { font-size: 18px; color: rgba(20,18,15,0.6); margin-bottom: 48px; font-style: italic; max-width: 500px; }
+.btn-cta-dark {
+  display: inline-flex; align-items: center; gap: 12px;
+  font-family: 'DM Mono', monospace; font-size: 12px;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  background: var(--ink); color: var(--paper);
+  padding: 18px 36px; text-decoration: none; transition: all 0.2s; cursor: crosshair;
+}
+.btn-cta-dark:hover { background: var(--paper); color: var(--ink); }
+
+/* ── FOOTER ──────────────────────────────────────────────────── */
+footer { background: var(--ink); color: var(--paper); padding: 60px 0 40px; }
+.footer-top {
+  display: flex; justify-content: space-between; align-items: flex-start;
+  padding-bottom: 48px; margin-bottom: 40px; border-bottom: 1px solid var(--border-dk);
+}
+.footer-logo {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 900; font-size: 32px;
+  letter-spacing: 0.08em; text-transform: uppercase; color: var(--paper); margin-bottom: 6px;
+}
+.footer-tagline { font-family: 'DM Mono', monospace; font-size: 10px; color: rgba(246,241,232,0.28); letter-spacing: 0.12em; text-transform: uppercase; }
+.footer-links { display: flex; gap: 48px; }
+.footer-col-title { font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 0.16em; text-transform: uppercase; color: rgba(246,241,232,0.28); margin-bottom: 16px; }
+.footer-link { display: block; font-size: 13px; color: rgba(246,241,232,0.45); text-decoration: none; margin-bottom: 8px; transition: color 0.2s; cursor: crosshair; }
+.footer-link:hover { color: var(--paper); }
+.footer-bottom { display: flex; justify-content: space-between; font-family: 'DM Mono', monospace; font-size: 10px; color: rgba(246,241,232,0.2); }
+
+/* ── ANIMATIONS ──────────────────────────────────────────────── */
+@keyframes fadeUp { from { opacity:0; transform:translateY(24px); } to { opacity:1; transform:translateY(0); } }
+@keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
+@keyframes float {
+  from { transform: translateY(0px) rotate(var(--rot-from)); }
+  to   { transform: translateY(-12px) rotate(var(--rot-to)); }
+}
+@keyframes pulse { 0%,100%{opacity:0.4;transform:scale(0.8);} 50%{opacity:1;transform:scale(1.1);} }
+@keyframes marquee { from{transform:translateX(0);} to{transform:translateX(-50%);} }
+@keyframes cardAppear { from{opacity:0;transform:translateY(16px) scale(0.95);} to{opacity:1;transform:translateY(0) scale(1);} }
+
+.reveal { opacity:0; transform:translateY(32px); transition: opacity 0.7s ease, transform 0.7s ease; }
+.reveal.visible { opacity:1; transform:translateY(0); }
+.reveal-delay-1 { transition-delay: 0.1s; }
+.reveal-delay-2 { transition-delay: 0.2s; }
+.reveal-delay-3 { transition-delay: 0.3s; }
+
+a, button { cursor: crosshair; }
+@media (max-width: 900px) {
+  #hero { min-height: auto; }
+  .hero-workflow { height: 400px; }
+  .manifesto-grid { grid-template-columns:1fr; } .manifesto-left { position:static; }
+  .timeline-steps { grid-template-columns:1fr 1fr; }
+  .bento { grid-template-columns:1fr; } .bento-card.wide { grid-column:span 1; }
+  .int-grid { grid-template-columns:1fr 1fr; }
+  .vs-grid,.pricing-grid { grid-template-columns:1fr; }
+  .footer-top { flex-direction:column; gap:40px; }
+  .how-header { flex-direction:column; gap:24px; }
+  .nav-links { display:none; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo">
+    <span class="nav-logo-leaf"></span>
+    Canopy
+  </a>
+  <ul class="nav-links">
+    <li><a href="#how">How it works</a></li>
+    <li><a href="#features">Features</a></li>
+    <li><a href="#integrations">Integrations</a></li>
+    <li><a href="#pricing">Pricing</a></li>
+  </ul>
+  <a href="#cta" class="nav-cta">Get early access</a>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-text">
+    <div class="hero-eyebrow">
+      <div class="eyebrow-line"></div>
+      <span class="label-v">AI Design Thinking Engine</span>
+      <div class="eyebrow-line"></div>
+    </div>
+    <h1>
+      <span class="display hero-h1">See the system.</span>
+      <span class="display-italic hero-h1-italic">Think bold.</span>
+    </h1>
+    <p class="hero-sub">
+      Canopy is an <strong>AI Design Thinking Engine</strong> — a complete system that facilitates thinking, surfaces research, challenges assumptions, generates concepts, builds prototypes, prioritizes, and ships roadmaps.
+    </p>
+    <div class="hero-actions">
+      <a href="#cta" class="btn-primary">Get early access</a>
+      <a href="#how" class="btn-ghost">See how it works</a>
+    </div>
+  </div>
+
+  <!-- WORKFLOW ANIMATION -->
+  <div class="hero-workflow" id="heroWorkflow">
+
+    <!-- Stage tabs -->
+    <div class="wf-stages" id="wfStages">
+      <div class="wf-stage-tab" style="--c:#E94560" data-stage="0">01 · Think</div>
+      <div class="wf-stage-tab" style="--c:#4ECDC4" data-stage="1">02 · Board</div>
+      <div class="wf-stage-tab" style="--c:#FFE66D" data-stage="2">03 · Score</div>
+      <div class="wf-stage-tab" style="--c:#A78BFA" data-stage="3">04 · Prototype</div>
+      <div class="wf-stage-tab" style="--c:#6EE7B7" data-stage="4">05 · Roadmap</div>
+    </div>
+
+    <!-- ═══ SCENE 1: THINK ═══ -->
+    <div class="wf-scene" id="scene0">
+      <div class="s1-layout">
+        <div class="s1-chat">
+          <div class="s1-mode-pills">
+            <div class="s1-pill active">◎ Diverge</div>
+            <div class="s1-pill" style="border-color:rgba(74,158,255,0.3);color:rgba(74,158,255,0.3)">◈ Synthesize</div>
+            <div class="s1-pill" style="border-color:rgba(245,166,35,0.3);color:rgba(245,166,35,0.3)">◇ Pressure</div>
+          </div>
+          <div class="s1-msg user" style="animation-delay:0.2s">
+            We keep building features but retention stays flat. Something's wrong but I can't name it.
+          </div>
+          <div class="s1-msg ai" style="animation-delay:0.8s">
+            <div class="ai-label">◎ Canvas · Diverge</div>
+            You said "features" — but who decides what counts as value? The team, or the user at 11pm who's quietly churning?<br>
+            <span style="color:rgba(233,69,96,0.8);font-weight:500">→ What would a user say this product is actually for?</span>
+          </div>
+          <div class="s1-msg user" style="animation-delay:2.2s">
+            That's the thing — I think we built for the power user and the average person never got past step 2.
+          </div>
+          <div class="s1-msg ai" style="animation-delay:3s">
+            <div class="ai-label">◎ Canvas · Diverge</div>
+            Step 2 is where commitment happens. What if the problem isn't the product — it's that we never earned the right to ask for commitment?
+            <span style="color:rgba(233,69,96,0.8);font-weight:500">→ What does trust look like at step 2?</span>
+          </div>
+        </div>
+        <div class="s1-data">
+          <div class="s1-data-label"><div class="s1-data-dot"></div> ContentSquare · Live</div>
+          <div class="s1-stat"><span class="stat-hi">67%</span> of users exit onboarding at Step 2</div>
+          <div class="s1-stat">Mobile users spend <span class="stat-hi">3.2×</span> longer on pricing page</div>
+          <div class="s1-stat"><span class="stat-hi">94%</span> exposure on Learn More CTA — <span class="stat-hi">2.1%</span> click</div>
+          <div class="s1-stat">Users reaching dashboard in &lt;90s have <span class="stat-hi">4× retention</span></div>
+          <div class="s1-stat">Rage click hotspot on <span class="stat-hi">Next</span> during form completion</div>
+        </div>
+      </div>
+      <div class="wf-ai-bar">
+        <div class="wf-ai-dot"></div>
+        <span class="wf-ai-label">Canopy · Think ·</span>
+        Diverge mode — asking the question behind your question
+      </div>
+    </div>
+
+    <!-- ═══ SCENE 2: BOARD ═══ -->
+    <div class="wf-scene" id="scene1">
+      <div class="s2-layout" style="position:relative;width:100%;height:100%;">
+        <!-- Clusters (appear after cards) -->
+        <div class="s2-cluster" id="cl1" style="left:5%;top:12%;width:30%;height:52%;border-color:rgba(233,69,96,0.3);color:rgba(233,69,96,0.5);">Trust &amp; Onboarding</div>
+        <div class="s2-cluster" id="cl2" style="left:37%;top:8%;width:28%;height:56%;border-color:rgba(78,205,196,0.3);color:rgba(78,205,196,0.5);">Value Discovery</div>
+        <div class="s2-cluster" id="cl3" style="left:67%;top:15%;width:29%;height:48%;border-color:rgba(167,139,250,0.3);color:rgba(167,139,250,0.5);">Retention Signals</div>
+        <!-- Cards -->
+        <div class="s2-card" style="left:7%;top:22%;--cc:#E94560">
+          <div class="c-dot"></div>Trust signal at Step 2 — show social proof before ask<div class="c-vote">▲ 5 · You</div>
+        </div>
+        <div class="s2-card" style="left:9%;top:52%;--cc:#FF9F43">
+          <div class="c-dot"></div>Role-adaptive onboarding — power vs. casual track<div class="c-vote">▲ 4 · Alex</div>
+        </div>
+        <div class="s2-card" style="left:39%;top:18%;--cc:#4ECDC4">
+          <div class="c-dot"></div>Empty state as teaching moment, not blank screen<div class="c-vote">▲ 5 · Sam</div>
+        </div>
+        <div class="s2-card" style="left:40%;top:50%;--cc:#4ECDC4">
+          <div class="c-dot"></div>Value milestone at 90s — celebrate first win<div class="c-vote">▲ 3 · Jordan</div>
+        </div>
+        <div class="s2-card" style="left:68%;top:20%;--cc:#A78BFA">
+          <div class="c-dot"></div>Behavioral triggers — re-engage at churn signals<div class="c-vote">▲ 4 · You</div>
+        </div>
+        <div class="s2-card" style="left:69%;top:52%;--cc:#6EE7B7">
+          <div class="c-dot"></div>Peer learning — see how similar teams use it<div class="c-vote">▲ 3 · Alex</div>
+        </div>
+      </div>
+      <div class="wf-ai-bar">
+        <div class="wf-ai-dot"></div>
+        <span class="wf-ai-label">Canopy · Board ·</span>
+        Found 3 theme clusters · What's the most surprising grouping?
+      </div>
+    </div>
+
+    <!-- ═══ SCENE 3: SCORE ═══ -->
+    <div class="wf-scene" id="scene2">
+      <div class="s3-layout">
+        <div class="s3-matrix" id="s3matrix">
+          <div class="s3-crosshair-h"></div>
+          <div class="s3-crosshair-v"></div>
+          <div class="s3-axis-label" style="bottom:4px;left:50%;transform:translateX(-50%)">Value →</div>
+          <div class="s3-axis-label" style="left:4px;top:50%;transform:translateY(-50%) rotate(-90deg)">Feasibility →</div>
+          <div class="s3-quadrant-label" style="top:10%;right:10%;color:rgba(110,231,183,0.7)">Quick Wins</div>
+          <div class="s3-quadrant-label" style="top:10%;left:10%;color:rgba(167,139,250,0.7)">Bets</div>
+          <div class="s3-quadrant-label" style="bottom:10%;right:10%;color:rgba(255,230,109,0.5)">Table Stakes</div>
+          <div class="s3-quadrant-label" style="bottom:10%;left:12%;color:rgba(246,241,232,0.15)">Deprioritize</div>
+          <!-- Dots: left% = value/10*80+10, top% = (10-feasibility)/10*80+10 -->
+          <div class="s3-dot" id="d0" style="left:82%;top:14%;background:rgba(233,69,96,0.15);border-color:#E94560;color:#E94560;animation-delay:0.1s">A</div>
+          <div class="s3-dot" id="d1" style="left:74%;top:22%;background:rgba(78,205,196,0.15);border-color:#4ECDC4;color:#4ECDC4;animation-delay:0.25s">B</div>
+          <div class="s3-dot" id="d2" style="left:88%;top:30%;background:rgba(78,205,196,0.15);border-color:#4ECDC4;color:#4ECDC4;animation-delay:0.4s">C</div>
+          <div class="s3-dot" id="d3" style="left:60%;top:18%;background:rgba(167,139,250,0.15);border-color:#A78BFA;color:#A78BFA;animation-delay:0.55s">D</div>
+          <div class="s3-dot" id="d4" style="left:50%;top:60%;background:rgba(255,230,109,0.15);border-color:#FFE66D;color:#FFE66D;animation-delay:0.7s">E</div>
+          <div class="s3-dot" id="d5" style="left:32%;top:72%;background:rgba(246,241,232,0.08);border-color:rgba(246,241,232,0.2);color:rgba(246,241,232,0.3);animation-delay:0.85s">F</div>
+        </div>
+        <div class="s3-list" id="s3list">
+          <div class="s3-row" style="animation-delay:0.1s;border-left:2px solid #E94560">
+            <div class="s3-row-title">Trust signal at Step 2 — social proof</div>
+            <div class="s3-bars">
+              <div class="s3-bar-wrap"><div class="s3-bar-label">Value</div><div class="s3-bar-bg"><div class="s3-bar-fill" data-w="90" style="background:#E94560"></div></div></div>
+              <div class="s3-bar-wrap"><div class="s3-bar-label">Feasibility</div><div class="s3-bar-bg"><div class="s3-bar-fill" data-w="88" style="background:#E94560"></div></div></div>
+            </div>
+          </div>
+          <div class="s3-row" style="animation-delay:0.25s;border-left:2px solid #4ECDC4">
+            <div class="s3-row-title">Empty state as teaching moment</div>
+            <div class="s3-bars">
+              <div class="s3-bar-wrap"><div class="s3-bar-label">Value</div><div class="s3-bar-bg"><div class="s3-bar-fill" data-w="82" style="background:#4ECDC4"></div></div></div>
+              <div class="s3-bar-wrap"><div class="s3-bar-label">Feasibility</div><div class="s3-bar-bg"><div class="s3-bar-fill" data-w="78" style="background:#4ECDC4"></div></div></div>
+            </div>
+          </div>
+          <div class="s3-row" style="animation-delay:0.4s;border-left:2px solid #4ECDC4">
+            <div class="s3-row-title">Value milestone — celebrate first win at 90s</div>
+            <div class="s3-bars">
+              <div class="s3-bar-wrap"><div class="s3-bar-label">Value</div><div class="s3-bar-bg"><div class="s3-bar-fill" data-w="94" style="background:#4ECDC4"></div></div></div>
+              <div class="s3-bar-wrap"><div class="s3-bar-label">Feasibility</div><div class="s3-bar-bg"><div class="s3-bar-fill" data-w="84" style="background:#4ECDC4"></div></div></div>
+            </div>
+          </div>
+          <div class="s3-row" style="animation-delay:0.55s;border-left:2px solid #A78BFA">
+            <div class="s3-row-title">Role-adaptive onboarding tracks</div>
+            <div class="s3-bars">
+              <div class="s3-bar-wrap"><div class="s3-bar-label">Value</div><div class="s3-bar-bg"><div class="s3-bar-fill" data-w="68" style="background:#A78BFA"></div></div></div>
+              <div class="s3-bar-wrap"><div class="s3-bar-label">Feasibility</div><div class="s3-bar-bg"><div class="s3-bar-fill" data-w="82" style="background:#A78BFA"></div></div></div>
+            </div>
+          </div>
+          <div class="s3-row" style="animation-delay:0.7s;border-left:2px solid #FFE66D">
+            <div class="s3-row-title">Behavioral churn-signal re-engagement</div>
+            <div class="s3-bars">
+              <div class="s3-bar-wrap"><div class="s3-bar-label">Value</div><div class="s3-bar-bg"><div class="s3-bar-fill" data-w="56" style="background:#FFE66D"></div></div></div>
+              <div class="s3-bar-wrap"><div class="s3-bar-label">Feasibility</div><div class="s3-bar-bg"><div class="s3-bar-fill" data-w="40" style="background:#FFE66D"></div></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="wf-ai-bar">
+        <div class="wf-ai-dot"></div>
+        <span class="wf-ai-label">Canopy · Score ·</span>
+        3 quick wins in the top-right quadrant · Which surprises you most?
+      </div>
+    </div>
+
+    <!-- ═══ SCENE 4: PROTOTYPE ═══ -->
+    <div class="wf-scene" id="scene3">
+      <div class="s4-layout">
+        <div class="s4-phone">
+          <div class="s4-phone-notch"></div>
+          <div class="s4-screen">
+            <div class="s4-nav">
+              <div class="s4-nav-brand">Canopy</div>
+              <div class="s4-nav-btn">Sign up</div>
+            </div>
+            <div class="s4-hero-img">🌳</div>
+            <div class="s4-heading">See the system.<br>Think bold.</div>
+            <div class="s4-body">Trusted by 2,400 teams. Join the waitlist and get early access.</div>
+            <div style="display:flex;gap:4px;margin-bottom:6px;">
+              <div style="flex:1;height:24px;background:rgba(246,241,232,0.06);border:1px solid rgba(246,241,232,0.1);border-radius:2px;display:flex;align-items:center;padding:0 5px;">
+                <span style="font-family:'DM Mono',monospace;font-size:7px;color:rgba(246,241,232,0.2)"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="522b3d272012373f333b3e7c313d3f">[email&#160;protected]</a></span>
+              </div>
+            </div>
+            <div class="s4-btn">Get early access →</div>
+            <div class="s4-card-row">
+              <div class="s4-mini-card">Facilitates thinking</div>
+              <div class="s4-mini-card">Surfaces patterns</div>
+            </div>
+            <div class="s4-card-row" style="margin-top:4px">
+              <div class="s4-mini-card">Builds prototypes</div>
+              <div class="s4-mini-card">Ships roadmaps</div>
+            </div>
+          </div>
+        </div>
+        <div class="s4-info">
+          <div>
+            <div class="s4-badge">
+              <div style="width:6px;height:6px;border-radius:50%;background:#A78BFA"></div>
+              Quick Prototype · From Board
+            </div>
+            <div style="font-family:'DM Mono',monospace;font-size:8px;color:rgba(246,241,232,0.2);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:6px;">Source idea</div>
+            <div style="background:rgba(167,139,250,0.06);border:1px solid rgba(167,139,250,0.15);border-radius:3px;padding:9px 12px;font-family:'Lora',serif;font-size:11px;color:rgba(246,241,232,0.55);line-height:1.5;font-style:italic;margin-bottom:14px;">
+              "Trust signal at Step 2 — show social proof before ask"
+            </div>
+          </div>
+          <div class="s4-ds-row">
+            <div class="s4-ds-label">Design system — Figma tokens</div>
+            <div class="s4-token-row">
+              <div class="s4-token" style="background:#7B5CF0;border-color:#7B5CF0"></div>
+              <div class="s4-token" style="background:#0D0D18"></div>
+              <div class="s4-token" style="background:#1A1A2E"></div>
+              <div class="s4-token" style="background:#E0DEF4"></div>
+              <div class="s4-token" style="background:#444460"></div>
+              <div class="s4-token" style="background:#6EE7B7;border-color:#6EE7B7"></div>
+              <span style="font-family:'DM Mono',monospace;font-size:8px;color:rgba(246,241,232,0.2);align-self:center;margin-left:4px">r=6px</span>
+            </div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:6px;">
+            <div style="padding:8px 11px;background:rgba(167,139,250,0.08);border:1px solid rgba(167,139,250,0.2);border-radius:3px;font-family:'DM Mono',monospace;font-size:9px;color:rgba(167,139,250,0.8);display:flex;align-items:center;gap:7px;">
+              <span>◻</span> Open in Prototype Builder
+            </div>
+            <div style="padding:8px 11px;background:rgba(255,107,107,0.07);border:1px solid rgba(255,107,107,0.18);border-radius:3px;font-family:'DM Mono',monospace;font-size:9px;color:rgba(255,107,107,0.7);display:flex;align-items:center;gap:7px;">
+              <span>✦</span> Add to Board as concept card
+            </div>
+            <div style="padding:8px 11px;background:rgba(30,200,120,0.07);border:1px solid rgba(30,200,120,0.15);border-radius:3px;font-family:'DM Mono',monospace;font-size:9px;color:rgba(30,200,120,0.7);display:flex;align-items:center;gap:7px;">
+              <span>→</span> Send to Figma
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="wf-ai-bar">
+        <div class="wf-ai-dot"></div>
+        <span class="wf-ai-label">Canopy · Prototype ·</span>
+        Generated in 2.8s · Use your design system or color outside the lines
+      </div>
+    </div>
+
+    <!-- ═══ SCENE 5: ROADMAP ═══ -->
+    <div class="wf-scene" id="scene4">
+      <div class="s5-layout">
+        <div class="s5-progress">
+          <div class="s5-progress-seg" style="background:#E94560"></div>
+          <div class="s5-progress-seg" style="background:#FFE66D"></div>
+          <div class="s5-progress-seg" style="background:#6EE7B7"></div>
+        </div>
+        <div class="s5-phases">
+          <div class="s5-phase" id="ph0" style="border:1px solid rgba(233,69,96,0.18);animation:phaseRise 0.5s 0.1s ease both;">
+            <div class="s5-phase-label" style="color:#E94560">Phase 1</div>
+            <div class="s5-phase-time">Month 1–2</div>
+            <div class="s5-milestone">Earn the right to ask</div>
+            <div class="s5-metric" style="background:rgba(233,69,96,0.07);border:1px solid rgba(233,69,96,0.18);color:rgba(233,69,96,0.7)">✓ 40% Step 2 completion</div>
+            <div class="s5-task"><div class="s5-task-dot" style="background:#E94560"></div><div class="s5-task-text" style="color:rgba(233,69,96,0.5)">Trust signal — social proof at Step 2</div></div>
+            <div class="s5-task"><div class="s5-task-dot" style="background:#E94560"></div><div class="s5-task-text" style="color:rgba(233,69,96,0.5)">Empty-state redesign as teaching moment</div></div>
+            <div class="s5-task"><div class="s5-task-dot" style="background:#E94560"></div><div class="s5-task-text" style="color:rgba(233,69,96,0.5)">First-win celebration at 90-second mark</div></div>
+          </div>
+          <div class="s5-phase" id="ph1" style="border:1px solid rgba(255,230,109,0.18);animation:phaseRise 0.5s 0.3s ease both;">
+            <div class="s5-phase-label" style="color:#FFE66D">Phase 2</div>
+            <div class="s5-phase-time">Month 3–4</div>
+            <div class="s5-milestone">Personalise the path</div>
+            <div class="s5-metric" style="background:rgba(255,230,109,0.07);border:1px solid rgba(255,230,109,0.18);color:rgba(255,230,109,0.7)">✓ 2× 30-day retention</div>
+            <div class="s5-task"><div class="s5-task-dot" style="background:#FFE66D"></div><div class="s5-task-text" style="color:rgba(255,230,109,0.5)">Role-adaptive onboarding tracks</div></div>
+            <div class="s5-task"><div class="s5-task-dot" style="background:#FFE66D"></div><div class="s5-task-text" style="color:rgba(255,230,109,0.5)">Contextual tooltips on usage patterns</div></div>
+            <div class="s5-task"><div class="s5-task-dot" style="background:#FFE66D"></div><div class="s5-task-text" style="color:rgba(255,230,109,0.5)">Peer learning — similar team insights</div></div>
+          </div>
+          <div class="s5-phase" id="ph2" style="border:1px solid rgba(110,231,183,0.18);animation:phaseRise 0.5s 0.5s ease both;">
+            <div class="s5-phase-label" style="color:#6EE7B7">Phase 3</div>
+            <div class="s5-phase-time">Month 5–6</div>
+            <div class="s5-milestone">Close the loop on churn</div>
+            <div class="s5-metric" style="background:rgba(110,231,183,0.07);border:1px solid rgba(110,231,183,0.18);color:rgba(110,231,183,0.7)">✓ 60-day churn –25%</div>
+            <div class="s5-task"><div class="s5-task-dot" style="background:#6EE7B7"></div><div class="s5-task-text" style="color:rgba(110,231,183,0.5)">Behavioral churn-signal detection</div></div>
+            <div class="s5-task"><div class="s5-task-dot" style="background:#6EE7B7"></div><div class="s5-task-text" style="color:rgba(110,231,183,0.5)">Automated re-engagement triggers</div></div>
+            <div class="s5-task"><div class="s5-task-dot" style="background:#6EE7B7"></div><div class="s5-task-text" style="color:rgba(110,231,183,0.5)">In-app coach for real-time questions</div></div>
+          </div>
+        </div>
+        <div class="s5-export-bar" id="s5export">
+          <span style="font-family:'DM Mono',monospace;font-size:8.5px;color:rgba(246,241,232,0.25);flex:1">9 tasks · 3 phases · Generated from session</span>
+          <div class="s5-export-btn" style="background:rgba(167,139,250,0.1);color:rgba(167,139,250,0.8);border:1px solid rgba(167,139,250,0.2)">◻ Export slides</div>
+          <div class="s5-export-btn" style="background:rgba(110,231,183,0.08);color:rgba(110,231,183,0.7);border:1px solid rgba(110,231,183,0.18);margin-left:6px">✦ User stories → Jira</div>
+          <div class="s5-export-btn" style="background:rgba(246,241,232,0.04);color:rgba(246,241,232,0.25);border:1px solid rgba(246,241,232,0.08);margin-left:6px">Copy MD</div>
+        </div>
+      </div>
+      <div class="wf-ai-bar">
+        <div class="wf-ai-dot"></div>
+        <span class="wf-ai-label">Canopy · Roadmap ·</span>
+        What's the earliest signal Phase 1 is working?
+      </div>
+    </div>
+
+  </div><!-- /hero-workflow -->
+</section>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+(function() {
+  const SCENE_DURATION = 5800; // ms per scene
+  const SCENES = 5;
+  let current = 0;
+  let timer = null;
+  let barAnimated = [];
+
+  function activateScene(n) {
+    // Scenes
+    for (let i = 0; i < SCENES; i++) {
+      const s = document.getElementById('scene' + i);
+      if (s) s.classList.toggle('active', i === n);
+    }
+    // Stage tabs
+    const tabs = document.querySelectorAll('.wf-stage-tab');
+    tabs.forEach((t, i) => {
+      t.classList.toggle('active', i === n);
+      t.classList.toggle('done', i < n);
+    });
+    // Scene-specific init
+    if (n === 1) initBoard();
+    if (n === 2) initScore();
+    if (n === 4) initRoadmap();
+  }
+
+  function initBoard() {
+    const cards = document.querySelectorAll('#scene1 .s2-card');
+    const clusters = document.querySelectorAll('#scene1 .s2-cluster');
+    cards.forEach((c, i) => {
+      c.style.opacity = '0';
+      c.style.transition = 'none';
+      setTimeout(() => {
+        c.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
+        c.style.opacity = '1';
+        c.style.transform = 'translateY(0)';
+      }, i * 180 + 100);
+    });
+    clusters.forEach((cl, i) => {
+      cl.style.opacity = '0';
+      setTimeout(() => { cl.style.opacity = '1'; }, i * 200 + 1200);
+    });
+  }
+
+  function initScore() {
+    if (barAnimated[2]) return;
+    barAnimated[2] = true;
+    setTimeout(() => {
+      document.querySelectorAll('#scene2 .s3-bar-fill').forEach(bar => {
+        bar.style.width = bar.dataset.w + '%';
+      });
+    }, 200);
+  }
+
+  function initRoadmap() {
+    const exp = document.getElementById('s5export');
+    if (exp) setTimeout(() => { exp.style.animation = 'fadeIn 0.5s 0.8s ease both'; exp.style.opacity = '1'; }, 800);
+  }
+
+  function next() {
+    current = (current + 1) % SCENES;
+    activateScene(current);
+  }
+
+  // Allow clicking stage tabs
+  document.querySelectorAll('.wf-stage-tab').forEach((tab, i) => {
+    tab.addEventListener('click', () => {
+      clearInterval(timer);
+      current = i;
+      activateScene(i);
+      timer = setInterval(next, SCENE_DURATION);
+    });
+  });
+
+  // Start
+  activateScene(0);
+  timer = setInterval(next, SCENE_DURATION);
+})();
+</script>
+
+<!-- MARQUEE -->
+<div class="marquee-strip">
+  <div class="marquee-track" id="marquee">
+    <span class="marquee-item">AI Design Thinking Engine <span class="marquee-dot"></span></span>
+    <span class="marquee-item">Facilitates · Surfaces · Challenges <span class="marquee-dot"></span></span>
+    <span class="marquee-item">Rapid Prototyping <span class="marquee-dot"></span></span>
+    <span class="marquee-item">Idea → Roadmap → Shipped <span class="marquee-dot"></span></span>
+    <span class="marquee-item">User Stories in one click <span class="marquee-dot"></span></span>
+    <span class="marquee-item">Pattern Recognition <span class="marquee-dot"></span></span>
+    <span class="marquee-item">Assumption Challenger <span class="marquee-dot"></span></span>
+    <span class="marquee-item">AI Design Thinking Engine <span class="marquee-dot"></span></span>
+    <span class="marquee-item">Facilitates · Surfaces · Challenges <span class="marquee-dot"></span></span>
+    <span class="marquee-item">Rapid Prototyping <span class="marquee-dot"></span></span>
+    <span class="marquee-item">Idea → Roadmap → Shipped <span class="marquee-dot"></span></span>
+    <span class="marquee-item">User Stories in one click <span class="marquee-dot"></span></span>
+    <span class="marquee-item">Pattern Recognition <span class="marquee-dot"></span></span>
+    <span class="marquee-item">Assumption Challenger <span class="marquee-dot"></span></span>
+  </div>
+</div>
+
+<!-- MANIFESTO -->
+<section id="manifesto">
+  <div class="container">
+    <div class="manifesto-grid">
+      <div class="manifesto-left">
+        <div class="manifesto-number">01</div>
+        <div class="label-v" style="margin-bottom:16px">Why Canopy</div>
+      </div>
+      <div>
+        <p class="manifesto-statement reveal">
+          Most AI tools flatten your thinking into a prompt box.<br>
+          <em>Canopy gives you altitude.</em>
+        </p>
+        <p class="manifesto-body reveal reveal-delay-1">
+          When you're designing, you're inside the problem. You see the detail but miss the pattern. You feel the tension but can't name it. You have the ideas but can't see how they connect.
+        </p>
+        <p class="manifesto-body reveal reveal-delay-2">
+          <strong>Canopy works as the intelligence layer underneath your process</strong> — surfacing what you can't see when you're in the weeds. It detects overarching themes, patterns across ideas, and system-level tensions before they become mistakes you ship.
+        </p>
+        <blockquote class="pull-quote reveal reveal-delay-3">
+          "The best designers don't just solve problems — they see the system behind them. Canopy helps you do that faster and communicate it to anyone in the room."
+        </blockquote>
+        <p class="manifesto-body reveal">
+          The designer is the intelligence. <strong>Canopy is the altitude.</strong> You make every call. Canopy makes sure you've seen everything worth seeing before you do.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- AI DESIGN THINKING ENGINE — 7 CAPABILITIES -->
+<section id="engine">
+  <div class="container">
+    <div class="engine-header reveal">
+      <div class="label-v" style="margin-bottom:16px">What Canopy actually does</div>
+      <h2 class="display engine-h2">Not a prompt box.<br><span class="accent">An engine.</span></h2>
+      <p class="engine-intro">Most AI tools answer questions. Canopy runs a complete design thinking system — seven interconnected capabilities, one continuous session.</p>
+    </div>
+    <div class="engine-grid reveal">
+      <div class="engine-step">
+        <div class="engine-num">01</div>
+        <div class="engine-icon">🌳</div>
+        <div class="engine-title">Facilitates design thinking &amp; brainstorming</div>
+        <div class="engine-body">Three coaching modes — Diverge, Synthesize, Pressure Test — that ask the question behind your question. Never generic. Never a list.</div>
+      </div>
+      <div class="engine-step">
+        <div class="engine-num">02</div>
+        <div class="engine-icon">🔭</div>
+        <div class="engine-title">Surfaces research &amp; patterns</div>
+        <div class="engine-body">Behavioral data from ContentSquare, Hotjar, and Maze woven directly into your session. Canopy names themes and surfaces what you can't see from inside the problem.</div>
+      </div>
+      <div class="engine-step">
+        <div class="engine-num">03</div>
+        <div class="engine-icon">⚡</div>
+        <div class="engine-title">Challenges assumptions</div>
+        <div class="engine-body">Pressure Test mode finds the weakest assumption in your thinking and presses on it before you commit. The inversion question. The constraint flip.</div>
+      </div>
+      <div class="engine-step">
+        <div class="engine-num">04</div>
+        <div class="engine-icon">◈</div>
+        <div class="engine-title">Generates concept directions</div>
+        <div class="engine-body">Canopy clusters your ideas into named themes, scores them on value and feasibility, and reveals the strategic bets hiding inside your messy brainstorm.</div>
+      </div>
+      <div class="engine-step engine-step--accent">
+        <div class="engine-num">05</div>
+        <div class="engine-icon">◻</div>
+        <div class="engine-title">Creates prototypes</div>
+        <div class="engine-body">Any idea in your session becomes a UI in seconds. Use your design system, or color outside the lines. Prototypes feed back into the board — nothing leaves the session.</div>
+        <div class="engine-new">New</div>
+      </div>
+      <div class="engine-step">
+        <div class="engine-num">06</div>
+        <div class="engine-icon">▲</div>
+        <div class="engine-title">Prioritizes opportunities</div>
+        <div class="engine-body">Quick Wins. Strategic Bets. Table Stakes. Canopy runs the matrix — votes, value, feasibility, strategic fit — and gives you a ranked list with rationale.</div>
+      </div>
+      <div class="engine-step engine-step--full">
+        <div class="engine-num">07</div>
+        <div class="engine-icon">→</div>
+        <div class="engine-title">Produces actionable roadmaps</div>
+        <div class="engine-body">Three-phase roadmaps with milestones, success metrics, and sequenced tasks. Export as slides, generate user stories for Jira, Asana, Monday, Airtable, or Linear — in one click.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS — HORIZONTAL TIMELINE -->
+<section id="how">
+  <div class="container">
+    <div class="how-header reveal">
+      <h2 class="how-h2 display">
+        From<br><span class="accent">big</span> &amp; messy<br>to sharp &amp; shipped.
+      </h2>
+      <p class="how-intro">Five stages. One continuous session. Divergent exploration funneling into a committed direction — with Canopy holding the altitude the whole way.</p>
+    </div>
+
+    <div class="timeline-wrap reveal">
+      <div class="timeline-rail"></div>
+      <div class="timeline-rail-fill" id="rail-fill"></div>
+
+      <div class="timeline-steps">
+
+        <!-- Step 1 -->
+        <div class="t-step" style="--c:#C4B4F8">
+          <div class="t-bar"></div>
+          <div class="t-num">01</div>
+          <div style="display:flex;align-items:center;margin-bottom:28px">
+            <div class="t-node"></div>
+          </div>
+          <div class="t-step-inner">
+            <div class="t-label">Wide open</div>
+            <span class="t-icon">🌳</span>
+            <div class="t-title">Discover</div>
+            <div class="t-desc">Start broader than feels comfortable. Canopy surfaces behavioral data and asks the question behind your question — pushing you past the obvious frame.</div>
+          </div>
+          <div class="t-funnel-pop">
+            <div class="funnel-pop-label">Divergence profile</div>
+            <div class="fp-row"><div class="fp-row-labels"><span>Idea space</span><span>Wide</span></div><div class="fp-bar-bg"><div class="fp-bar-fill" style="width:96%"></div></div></div>
+            <div class="fp-row"><div class="fp-row-labels"><span>Constraints</span><span>None</span></div><div class="fp-bar-bg"><div class="fp-bar-fill" style="width:5%"></div></div></div>
+            <div class="fp-row"><div class="fp-row-labels"><span>Data active</span><span>Yes</span></div><div class="fp-bar-bg"><div class="fp-bar-fill" style="width:72%"></div></div></div>
+          </div>
+        </div>
+
+        <!-- Step 2 -->
+        <div class="t-step" style="--c:#9B82F4">
+          <div class="t-bar"></div>
+          <div class="t-num">02</div>
+          <div style="display:flex;align-items:center;margin-bottom:28px">
+            <div class="t-node"></div>
+          </div>
+          <div class="t-step-inner">
+            <div class="t-label">Narrowing</div>
+            <span class="t-icon">🔭</span>
+            <div class="t-title">Define</div>
+            <div class="t-desc">Pattern recognition kicks in. Canopy clusters your ideas, names themes precisely, and surfaces the contradiction at the heart of your best insight.</div>
+          </div>
+          <div class="t-funnel-pop">
+            <div class="funnel-pop-label">Divergence profile</div>
+            <div class="fp-row"><div class="fp-row-labels"><span>Idea space</span><span>Narrowing</span></div><div class="fp-bar-bg"><div class="fp-bar-fill" style="width:66%"></div></div></div>
+            <div class="fp-row"><div class="fp-row-labels"><span>Patterns</span><span>Emerging</span></div><div class="fp-bar-bg"><div class="fp-bar-fill" style="width:58%"></div></div></div>
+            <div class="fp-row"><div class="fp-row-labels"><span>Tensions</span><span>Named</span></div><div class="fp-bar-bg"><div class="fp-bar-fill" style="width:82%"></div></div></div>
+          </div>
+        </div>
+
+        <!-- Step 3 -->
+        <div class="t-step" style="--c:#7B5CF0">
+          <div class="t-bar"></div>
+          <div class="t-num">03</div>
+          <div style="display:flex;align-items:center;margin-bottom:28px">
+            <div class="t-node"></div>
+          </div>
+          <div class="t-step-inner">
+            <div class="t-label">Generative</div>
+            <span class="t-icon">⚡</span>
+            <div class="t-title">Ideate</div>
+            <div class="t-desc">Ideas get challenged, scored, clustered in real time. Canopy asks the inversion question, surfaces the analogy, and votes surface what matters.</div>
+          </div>
+          <div class="t-funnel-pop">
+            <div class="funnel-pop-label">Divergence profile</div>
+            <div class="fp-row"><div class="fp-row-labels"><span>Idea space</span><span>Focused</span></div><div class="fp-bar-bg"><div class="fp-bar-fill" style="width:44%"></div></div></div>
+            <div class="fp-row"><div class="fp-row-labels"><span>Ideas on board</span><span>High</span></div><div class="fp-bar-bg"><div class="fp-bar-fill" style="width:90%"></div></div></div>
+            <div class="fp-row"><div class="fp-row-labels"><span>Score active</span><span>Yes</span></div><div class="fp-bar-bg"><div class="fp-bar-fill" style="width:70%"></div></div></div>
+          </div>
+        </div>
+
+        <!-- Step 4 — NEW -->
+        <div class="t-step" style="--c:#C4B4F8">
+          <div class="t-bar"></div>
+          <div class="t-num">04</div>
+          <div style="display:flex;align-items:center;margin-bottom:28px">
+            <div class="t-node"></div>
+          </div>
+          <div class="t-step-inner">
+            <div class="t-label">Tangible</div>
+            <span class="t-icon">◻</span>
+            <div class="t-title">Prototype <span class="t-new">New</span></div>
+            <div class="t-desc">Rapidly sketch UI directly inside your session. Connect your design system or break the rules entirely. Prototypes feed back into the board as idea cards — nothing leaves the session.</div>
+          </div>
+          <div class="t-funnel-pop">
+            <div class="funnel-pop-label">Divergence profile</div>
+            <div class="fp-row"><div class="fp-row-labels"><span>Idea space</span><span>Sharp</span></div><div class="fp-bar-bg"><div class="fp-bar-fill" style="width:26%"></div></div></div>
+            <div class="fp-row"><div class="fp-row-labels"><span>Tangible</span><span>Yes</span></div><div class="fp-bar-bg"><div class="fp-bar-fill" style="width:92%"></div></div></div>
+            <div class="fp-row"><div class="fp-row-labels"><span>Design system</span><span>Live</span></div><div class="fp-bar-bg"><div class="fp-bar-fill" style="width:100%"></div></div></div>
+          </div>
+        </div>
+
+        <!-- Step 5 -->
+        <div class="t-step" style="--c:#9B82F4">
+          <div class="t-bar"></div>
+          <div class="t-num">05</div>
+          <div style="display:flex;align-items:center;margin-bottom:28px">
+            <div class="t-node"></div>
+          </div>
+          <div class="t-step-inner">
+            <div class="t-label">Convergent</div>
+            <span class="t-icon">→</span>
+            <div class="t-title">Deliver</div>
+            <div class="t-desc">Canopy generates a prioritized roadmap with rationale you can take directly into any stakeholder meeting. Your design thinking, communicable to anyone in the room.</div>
+          </div>
+          <div class="t-funnel-pop" style="right:0;left:auto;">
+            <div class="funnel-pop-label">Divergence profile</div>
+            <div class="fp-row"><div class="fp-row-labels"><span>Idea space</span><span>Converged</span></div><div class="fp-bar-bg"><div class="fp-bar-fill" style="width:10%"></div></div></div>
+            <div class="fp-row"><div class="fp-row-labels"><span>Confidence</span><span>High</span></div><div class="fp-bar-bg"><div class="fp-bar-fill" style="width:94%"></div></div></div>
+            <div class="fp-row"><div class="fp-row-labels"><span>Roadmap</span><span>Ready</span></div><div class="fp-bar-bg"><div class="fp-bar-fill" style="width:100%"></div></div></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES BENTO -->
+<section id="features">
+  <div class="container">
+    <div class="features-heading reveal">
+      <div class="eyebrow-line" style="background:var(--violet)"></div>
+      <h2 class="features-h2 display">What<br>Canopy<br><em style="font-style:italic;color:var(--violet)">detects.</em></h2>
+    </div>
+    <div class="bento reveal reveal-delay-1">
+      <div class="bento-card wide">
+        <div class="bento-icon">🌳</div>
+        <div class="bento-title">See the forest through the trees</div>
+        <div class="bento-desc">You're in the detail. Canopy is at altitude — holding the full context of your session and naming the system-level pattern you can't see when you're close to the work.</div>
+        <div class="chip-row">
+          <span class="chip v">Overarching perspective</span>
+          <span class="chip v">Pattern recognition</span>
+          <span class="chip v">System-level thinking</span>
+        </div>
+        <div class="bento-number" style="color:var(--violet)">∞</div>
+      </div>
+      <div class="bento-card dark">
+        <div class="bento-icon">⚙️</div>
+        <div class="bento-title">Tensions, not just themes</div>
+        <div class="bento-desc">The best insight lives at the intersection of two things that seem to contradict each other. Canopy names the contradiction so you can act on it.</div>
+      </div>
+      <div class="bento-card violet-card tall">
+        <div class="bento-icon">🔭</div>
+        <div class="bento-title">Your AI designer teammate</div>
+        <div class="bento-desc">You set the direction. Canopy asks the harder question. Every call is yours — Canopy just makes sure you've seen everything worth seeing before you make it.</div>
+        <div class="chip-row" style="margin-top:24px">
+          <span class="chip" style="background:rgba(255,255,255,0.15);border-color:rgba(255,255,255,0.25);color:#fff">You lead</span>
+          <span class="chip" style="background:rgba(255,255,255,0.15);border-color:rgba(255,255,255,0.25);color:#fff">AI amplifies</span>
+        </div>
+      </div>
+      <div class="bento-card">
+        <div class="bento-icon">📡</div>
+        <div class="bento-title">Live data woven in</div>
+        <div class="bento-desc">ContentSquare, Hotjar, Analytics — not in a separate tab. Your behavioral data is active context in every facilitation question Canopy asks.</div>
+      </div>
+      <div class="bento-card dark">
+        <div class="bento-icon">◻</div>
+        <div class="bento-title">Sketch it. Now.</div>
+        <div class="bento-desc">Prototype inside the session. Connect your design system or go off-grid. Ideas become screens, screens become board cards.</div>
+      </div>
+      <div class="bento-card">
+        <div class="bento-icon">→</div>
+        <div class="bento-title">Roadmap & rationale, ready to share</div>
+        <div class="bento-desc">Canopy exports a prioritized roadmap with the design thinking behind every decision — communicable to engineering, product, or leadership.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- INTEGRATIONS -->
+<section id="integrations">
+  <div class="container">
+    <div class="reveal">
+      <div class="eyebrow-line" style="background:var(--violet);display:inline-block;width:40px;height:1px;margin-bottom:20px"></div>
+      <h2 class="display features-h2" style="font-size:clamp(48px,6vw,80px);max-width:700px;line-height:0.95">Live<br>integrations.</h2>
+      <p style="font-size:16px;font-style:italic;color:var(--muted);max-width:480px;margin-top:20px;line-height:1.7">Connect your data from any platform to build more context. Behavioral data, analytics, research — woven into your session, not sitting in a separate tab.</p>
+    </div>
+    <div class="int-grid reveal reveal-delay-1">
+      <div class="int-card">
+        <span class="int-logo">📊</span>
+        <div class="int-name">ContentSquare</div>
+        <div class="int-desc">Session replays, heatmaps, rage clicks — live in your facilitation session.</div>
+        <span class="int-badge badge-live">Live</span>
+      </div>
+      <div class="int-card">
+        <span class="int-logo">🔥</span>
+        <div class="int-name">Hotjar</div>
+        <div class="int-desc">Behavioral insights and scroll maps as session context.</div>
+        <span class="int-badge badge-live">Live</span>
+      </div>
+      <div class="int-card">
+        <span class="int-logo">📈</span>
+        <div class="int-name">Analytics</div>
+        <div class="int-desc">Google Analytics, Mixpanel, Amplitude — event data for design decisions.</div>
+        <span class="int-badge badge-soon">Coming soon</span>
+      </div>
+      <div class="int-card">
+        <span class="int-logo">🗺</span>
+        <div class="int-name">Maze</div>
+        <div class="int-desc">Usability test data and qualitative responses in the session.</div>
+        <span class="int-badge badge-soon">Coming soon</span>
+      </div>
+      <div class="int-card">
+        <span class="int-logo">✏️</span>
+        <div class="int-name">Figma</div>
+        <div class="int-desc">Your design system tokens and components in Canopy's prototype builder.</div>
+        <span class="int-badge badge-soon">Coming soon</span>
+      </div>
+      <div class="int-card">
+        <span class="int-logo">📝</span>
+        <div class="int-name">Notion</div>
+        <div class="int-desc">Session summaries and roadmaps exported to your workspace.</div>
+        <span class="int-badge badge-soon">Coming soon</span>
+      </div>
+      <div class="int-card">
+        <span class="int-logo">🔬</span>
+        <div class="int-name">UserZoom</div>
+        <div class="int-desc">Research findings as structured context for design thinking.</div>
+        <span class="int-badge badge-soon">Coming soon</span>
+      </div>
+      <div class="int-card add-card">
+        <span>+ Your platform</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- VS -->
+<section id="vs">
+  <div class="container">
+    <div class="reveal">
+      <div class="label-v" style="margin-bottom:16px">The difference</div>
+      <h2 class="display" style="font-size:clamp(48px,6vw,80px);max-width:700px;line-height:0.92">Canopy vs.<br>everything else.</h2>
+    </div>
+    <div class="vs-grid reveal reveal-delay-1">
+      <div class="vs-col theirs">
+        <div class="vs-label">Other AI design tools</div>
+        <div class="vs-item"><span class="vs-x">×</span> Replaces your thinking with generated output</div>
+        <div class="vs-item"><span class="vs-x">×</span> Flattens complexity into a prompt box</div>
+        <div class="vs-item"><span class="vs-x">×</span> No memory across your session</div>
+        <div class="vs-item"><span class="vs-x">×</span> Data lives in a separate tab, if at all</div>
+        <div class="vs-item"><span class="vs-x">×</span> Outputs a design, not a system</div>
+        <div class="vs-item"><span class="vs-x">×</span> Nothing to communicate to stakeholders</div>
+      </div>
+      <div class="vs-col ours">
+        <div class="vs-label">Canopy</div>
+        <div class="vs-item"><span class="vs-check">✓</span> Amplifies your thinking — you make every call</div>
+        <div class="vs-item"><span class="vs-check">✓</span> Holds the full context of your session at altitude</div>
+        <div class="vs-item"><span class="vs-check">✓</span> Persistent session with patterns across everything</div>
+        <div class="vs-item"><span class="vs-check">✓</span> Live data woven into every facilitation question</div>
+        <div class="vs-item"><span class="vs-check">✓</span> Surfaces system-level thinking, not just solutions</div>
+        <div class="vs-item"><span class="vs-check">✓</span> Roadmap + rationale ready for any audience</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section id="pricing">
+  <div class="container">
+    <div class="reveal">
+      <div class="label-v" style="margin-bottom:16px">Pricing</div>
+      <h2 class="display" style="font-size:clamp(48px,6vw,80px);max-width:600px;line-height:0.92">Simple.<br>Scales with your team.</h2>
+    </div>
+    <div class="pricing-grid reveal reveal-delay-1">
+      <div class="pricing-card">
+        <div class="price-tier">Solo</div>
+        <div class="price-amount">$25</div>
+        <div class="price-period">/ month</div>
+        <div class="price-divider"></div>
+        <div class="price-feature"><span class="check">✓</span> Unlimited thinking sessions</div>
+        <div class="price-feature"><span class="check">✓</span> All 5 design thinking stages</div>
+        <div class="price-feature"><span class="check">✓</span> Prototype builder</div>
+        <div class="price-feature"><span class="check">✓</span> ContentSquare + Hotjar</div>
+        <div class="price-feature"><span class="check">✓</span> Session summaries + roadmaps</div>
+        <a href="#cta" class="btn-price outline">Get started</a>
+      </div>
+      <div class="pricing-card featured">
+        <div class="featured-badge">Most popular</div>
+        <div class="price-tier">Team</div>
+        <div class="price-amount">$18</div>
+        <div class="price-period">/ seat / month</div>
+        <div class="price-divider"></div>
+        <div class="price-feature"><span class="check">✓</span> Everything in Solo</div>
+        <div class="price-feature"><span class="check">✓</span> Collaborative board sessions</div>
+        <div class="price-feature"><span class="check">✓</span> Shared design system tokens</div>
+        <div class="price-feature"><span class="check">✓</span> Multi-author idea cards</div>
+        <div class="price-feature"><span class="check">✓</span> Team roadmap export</div>
+        <a href="#cta" class="btn-price solid">Start team trial</a>
+      </div>
+      <div class="pricing-card">
+        <div class="price-tier">Enterprise</div>
+        <div class="price-amount" style="font-size:52px">Custom</div>
+        <div class="price-period">/ year</div>
+        <div class="price-divider"></div>
+        <div class="price-feature"><span class="check">✓</span> Everything in Team</div>
+        <div class="price-feature"><span class="check">✓</span> SSO + advanced security</div>
+        <div class="price-feature"><span class="check">✓</span> Custom integrations</div>
+        <div class="price-feature"><span class="check">✓</span> Dedicated onboarding</div>
+        <div class="price-feature"><span class="check">✓</span> SLA + support</div>
+        <a href="#cta" class="btn-price outline">Talk to us</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section id="cta">
+  <div class="container">
+    <div class="cta-inner reveal">
+      <div class="label" style="color:rgba(20,18,15,0.55);margin-bottom:24px">Early access</div>
+      <h2 class="display cta-h2">Ready to see<br>the whole system?</h2>
+      <p class="cta-sub">Canopy is in early access for design teams who think in systems. Join the waitlist — and be among the first to shape it.</p>
+      <a href="#" class="btn-cta-dark">Request early access →</a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="container">
+    <div class="footer-top">
+      <div>
+        <div class="footer-logo">Canopy</div>
+        <div class="footer-tagline">See the system behind the ideas.</div>
+      </div>
+      <div class="footer-links">
+        <div>
+          <div class="footer-col-title">Product</div>
+          <a class="footer-link" href="#">How it works</a>
+          <a class="footer-link" href="#">Features</a>
+          <a class="footer-link" href="#">Integrations</a>
+          <a class="footer-link" href="#">Pricing</a>
+        </div>
+        <div>
+          <div class="footer-col-title">Company</div>
+          <a class="footer-link" href="#">About</a>
+          <a class="footer-link" href="#">Blog</a>
+          <a class="footer-link" href="#">Careers</a>
+        </div>
+        <div>
+          <div class="footer-col-title">Legal</div>
+          <a class="footer-link" href="#">Privacy</a>
+          <a class="footer-link" href="#">Terms</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 Canopy. All rights reserved.</span>
+      <span>Design intelligence for systems thinkers.</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+// Marquee duplication for seamless loop
+const track = document.getElementById('marquee');
+track.innerHTML += track.innerHTML;
+
+// Scroll reveal
+const reveals = document.querySelectorAll('.reveal');
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); } });
+}, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+reveals.forEach(el => obs.observe(el));
+
+// Timeline rail animation when section comes into view
+const railFill = document.getElementById('rail-fill');
+const howSection = document.getElementById('how');
+const railObs = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) { railFill.classList.add('animate'); railObs.unobserve(e.target); } });
+}, { threshold: 0.3 });
+railObs.observe(howSection);
+
+// Nav blend mode scroll
+const nav = document.querySelector('nav');
+window.addEventListener('scroll', () => {
+  if (window.scrollY > 80) {
+    nav.style.mixBlendMode = 'normal';
+    nav.style.background = 'rgba(246,241,232,0.95)';
+    nav.style.backdropFilter = 'blur(12px)';
+    nav.st
